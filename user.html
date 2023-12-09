@@ -5,9 +5,104 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+<style>
+    .generalContainer {
+        border: 4px solid aqua;
+        border-radius: 4px;
+        margin: 7px;
+        padding: 5px;
+        color: white;
+        display: grid; 
+        grid-template-columns: auto auto auto;
+    }
+
+    .albumInner {
+        border-radius: 5px;
+        margin: 7px;
+        padding: 5px;
+        background-color: #323232;
+        color: white;
+    }
+
+    .albumInner:hover {
+        background-color: #0000ff;
+    }
+.postInner {
+        border-radius: 5px;
+        margin: 7px;
+        padding: 15px;
+        background-color: #323232;
+        color: white;
+    }
+    .commentInner {
+        border-radius: 5px;
+        margin: 7px;
+        padding: 5px;
+        background-color: #212121;
+        font-style: italic;
+        color: white;
+    }
+    .commentbtn {
+        width: 20px;
+        height: 20px;
+    }
+        .image-btn{
+        background: none;
+        border: none;
+        padding: 0;
+    }
+    .image-btn img{
+        display: block; /* to remove extra space below image */
+    }
+    .profile-container {
+        padding: 5px;
+        margin: 5px;
+    }
+
+    .profileInfo {
+        color: white;
+        padding: 15px;
+        font-size: 20px;
+    }
+
+    h2 {
+        color: white;
+        padding: 15px;
+    }
+
+    .profilePicStyle {
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        background-color: #cc4040;
+        color: white;
+        font-size: 50px;
+        text-align: center;
+        line-height: 100px;
+        margin: 25px;
+        float: left;
+    }
+
+</style>
 <body>
-    <div id="profile">
+    <div class="profile-container" id="profile">
+        <div id="profilePic"></div>
+        <div id="profileInfo" class="profileInfo">
+            <div id="profileName"></div>
+            <div id="profileEmail"></div>
+            <div id="profilePhone"></div>
+            <div id="profileWebsite"></div>
+        </div>
+
+        <h2>Albums</h2>
+        <div id="albums" class="generalContainer">
+        </div>
+    
+        <h2>Posts</h2>
+        <div id="posts" class="generalContainer" style="grid-template-columns: auto;">
+            </div>
 
     </div>
 </body>
@@ -18,8 +113,60 @@
 <script>
 
     async function getInfo() {
-        console.log(await getAlbumbyId(userID, await getAlbums())); 
+        const userInfo = await getUserbyId(userID);
+        //set profile pic to round image with first letter of name
+        const profilePic = document.getElementById("profilePic");
+        profilePic.className = "profilePicStyle";
 
+
+        profilePic.innerHTML = userInfo.name.charAt(0);
+
+        document.getElementById("profileName").innerHTML = userInfo.name;
+        document.getElementById("profileEmail").innerHTML = userInfo.email;
+        document.getElementById("profilePhone").innerHTML = userInfo.phone;
+        document.getElementById("profileWebsite").innerHTML = userInfo.website;
+        //set address and company
+        document.getElementById("profileInfo").innerHTML += "<div id='profileAddress'>" + userInfo.address.street + ", " + userInfo.address.suite + ", " + userInfo.address.city + ", " + userInfo.address.zipcode + "</div>";
+        document.getElementById("profileInfo").innerHTML += "<div id='profileCompany'>" + userInfo.company.name + "</div>";
+
+        //albums
+        const albums = await getAlbums(userID);
+        const albumsDiv = document.getElementById("albums");
+        for (let i = 0; i < albums.length; i++) {
+            const album = albums[i];
+            const albumDiv = document.createElement("div");
+            albumDiv.className = "albumInner";
+
+
+            albumDiv.innerHTML = album.title;
+            albumDiv.addEventListener("click", function() {
+                window.location.href = "album.html?albumid=" + album.id;
+            });
+            albumsDiv.appendChild(albumDiv);
+        } 
+
+        //posts
+        const posts = await getPosts(userID);
+        const postsDiv = document.getElementById("posts");
+        for (let i = 0; i < posts.length; i++) {
+            const post = posts[i];
+            const postDiv = document.createElement("div");
+            
+            postDiv.className = "postInner";
+            postDiv.innerHTML = "<span style='font-weight:bold; font-size:20px'>"+post.title+"</span>"+ "<br><br>" + post.body + "<br><br>"+"<span style='font-weight:bold; font-size: 20px'>Comments: </span>"+"<br>";
+
+            //add comments
+            const comments = await getComments(post.id);
+            for (let j = 0; j < comments.length; j++) {
+                const comment = comments[j];
+                const commentDiv = document.createElement("div");
+                commentDiv.className = "commentInner";
+                commentDiv.innerHTML = comment.name + "<br>" + comment.email + "<br>" + comment.body + "<br>";
+                postDiv.appendChild(commentDiv);
+            }
+
+            postsDiv.appendChild(postDiv);
+        }
     }
 
     const queryString = window.location.search;

@@ -2,19 +2,27 @@
 <html lang="en">
 
 <style>
+
     .userContainer {
-        border: 2px solid #0000ff;
+        margin: 0px;
         display:grid; 
         grid-template-columns: auto;
-        padding: 2.5;
-        background-color: #101010;
+        width: 100%;
+        /* center div */
     }  
 
+
+
     .indivUser {
-        margin: 7px;
+        margin: auto auto;
+        margin-top: 4px;
+        margin-bottom: 4px;
         padding: 5px;
         background-color: #323232;
-        color: white
+        max-width: 450px;
+        min-width: 450px;
+        color: white;
+        text-align: center;
     }
 
     .indivUser:hover {
@@ -30,6 +38,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="usersDiv" class="userContainer">
@@ -43,7 +52,32 @@
 <script>
 
 
+async function setUsers() {
+    const grid = document.getElementById("usersDiv");
 
+
+    const users = await getUsers();
+    for (let i = 0; i<users.length; i++) {
+        const user = users[i];
+
+        let thisDiv = document.createElement('div');
+
+        thisDiv.addEventListener("click", function() {
+                window.location.href = "user.html?userid=" + user.id;
+            });
+
+
+        thisDiv.className = "indivUser";
+
+        let name = document.createElement('p');
+
+        name.innerHTML=user.name;
+
+        thisDiv.appendChild(name);
+        grid.appendChild(thisDiv);
+        
+    }
+}
 
    setUsers();
    

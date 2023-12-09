@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<style>
+
+.generalContainer {
+        border: 4px solid aqua;
+        border-radius: 4px;
+        margin: 7px;
+        padding: 5px;
+        color: white;
+        display: grid; 
+        grid-template-columns: auto auto auto;
+ font-size: 20px;
+    }
+
+    h2 {
+        color: white;
+        padding: 15px;
+    }
+
+</style>
+<body>
+    <h2 id="albumTitle"></h2>
+    <div id="photos"></div>
+    
+</body>
+<script src="script.js"></script>
+
+<script>
+    
+    async function getInfo() {
+        const albumInfo = (await getAlbumbyAlbumId(albumID))[0];
+        const albumTitle = albumInfo.title;
+
+        document.getElementById("albumTitle").innerHTML = albumTitle;
+
+        const photos = await getPhotos(albumID);
+
+        const photosDiv = document.getElementById("photos");
+
+        for (let i = 0; i < photos.length; i++) {
+
+            const photo = photos[i];
+
+            const photoDiv = document.createElement("div");
+            photoDiv.className = "generalContainer";
+            photoDiv.id = photo.id;
+
+
+            photoDiv.innerHTML = "<img src='" + photo.thumbnailUrl + "' style='width: 100px; height: 100px;'>" + "<div>" + photo.title + "</div>";
+
+            photosDiv.appendChild(photoDiv);
+        
+            //comments button
+            }
+
+    }
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const albumID = urlParams.get('albumid');
+    getInfo();
+</script>
+</html>

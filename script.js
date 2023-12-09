@@ -1,16 +1,3 @@
-function open(event) {
-
-    let userID = event.target.getAttribute('userid');
-    console.log("OPENING", userID);
-    window.location = '/user.html?userid='+userID;
-
-
-    // const urlParams = new URLSearchParams(window.location.search);
-
-    // urlParams.set('userid', userID);
-
-    // window.location.search = urlParams;
-}
 
 function showInfo(event) {
     console.log("MOUSE CALLED");
@@ -74,71 +61,44 @@ async function getUsers() {
     return users;
 }
 
-async function getAlbums() {
-    const response = await fetch("https://jsonplaceholder.typicode.com/albums");
+async function getUserbyId(userId) {
+    const response = await fetch("https://jsonplaceholder.typicode.com/users/"+userId);
+    const user = await response.json();
+    return user;
+}
+
+async function getAlbumbyAlbumId(albumId) {
+    const response = await fetch("https://jsonplaceholder.typicode.com/albums/?id="+albumId);
+    const album = await response.json();
+    return album;
+}
+
+async function getAlbums(userId) {
+    const response = await fetch("https://jsonplaceholder.typicode.com/albums?userId="+userId);
     const albums = await response.json();
     return albums;
 }
 
-// async function getPhotos() {
-//     const response = await fetch("https://jsonplaceholder.typicode.com/photos");
-//     const photos = await response.json();
-//     return photos;
-// }
-
-
-function getAlbumbyId(userId, albums) {
-
-    
-    let albumLst = [];
-    for (let i = 0; i<albums.length; i++) {
-        if (albums[i].userId==userId) {
-            albumLst.push(albums[i]);
-        }
-    }
-    console.log("RETURNING", userId, albumLst);
-    return albumLst;
+async function getPhotos(albumId) {
+     const response = await fetch("https://jsonplaceholder.typicode.com/photos?albumId="+albumId);
+     const photos = await response.json();
+     return photos;
 }
 
-// function getPhotosbyAlbumId(albumId) {
-//     let photoLst = [];
-//     for (let i = 0; i<photos.length; i++) {
-//         if (photos[i].albumId==albumId) {
-//             photoLst.push(photos[i]);
-//         }
-//     }
-//     return photoLst;
-// }
-
-// async function loadData() {
-//     albums = await getAlbums(); 
-//     photos = await getPhotos();
-// }
-
-async function setUsers() {
-    const grid = document.getElementById("usersDiv");
-    //load all the data from the server
-
-
-    const users = await getUsers();
-    for (let i = 0; i<users.length; i++) {
-        const user = users[i];
-
-        let thisDiv = document.createElement('div');
-        // thisDiv.addEventListener("mouseenter", showInfo, once=true);
-        // thisDiv.addEventListener("mouseout", unHover, once=true);
-        thisDiv.addEventListener("click", open);
-        thisDiv.setAttribute("userId", user.id); //set user id 
-
-
-        thisDiv.className = "indivUser";
-
-        let name = document.createElement('p');
-
-        name.innerHTML=user.name;
-
-        thisDiv.appendChild(name);
-        grid.appendChild(thisDiv);
-        
-    }
+async function getPosts(userId) {
+     const response = await fetch("https://jsonplaceholder.typicode.com/posts?userId="+userId);
+     const posts = await response.json();
+     return posts;
 }
+
+async function getComments(postId) {
+     const response = await fetch("https://jsonplaceholder.typicode.com/comments?postId="+postId);
+     const comments = await response.json();
+     return comments;
+}
+
+
+
+
+
+
